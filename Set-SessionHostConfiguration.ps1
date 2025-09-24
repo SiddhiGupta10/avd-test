@@ -449,7 +449,7 @@ try {
         # Add Defender Exclusions for FSLogix 
         ##############################################################
         # https://docs.microsoft.com/en-us/azure/architecture/example-scenario/wvd/windows-virtual-desktop-fslogix#antivirus-exclusions
-        if ($Fslogix -eq 'true') {
+        if ($Fslogix -eq 'false') {
 
                 $Files = @(
                         "%ProgramFiles%\FSLogix\Apps\frxdrv.sys",
