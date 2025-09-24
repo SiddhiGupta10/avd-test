@@ -33,11 +33,11 @@ Param(
 
         [parameter(Mandatory = $false)]
         [string]
-        $ExtendOsDisk
+        $ExtendOsDisk,
 
         [parameter(Mandatory = $false)]
         [string[]]
-        $SaveCookiesOnExitUrls = @()
+        $SaveCookiesOnExitUrls = @(),
 
         [parameter(Mandatory = $false)]
         [switch]
