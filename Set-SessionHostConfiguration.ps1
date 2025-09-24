@@ -552,13 +552,13 @@ try {
         ##############################################################
         #  TimeZone and other settings applied
         ##############################################################
-        Set-TimeZone -Id "FLE Standard Time"
         Set-WinUILanguageOverride -Language fi-FI
         Set-WinUserLanguageList fi-FI -Force
         Set-WinSystemLocale fi-FI
         Set-Culture fi-FI
         Set-WinHomeLocation -GeoId 77
         Copy-UserInternationalSettingsToSystem -WelcomeScreen $False -NewUser $True
+        Set-TimeZone -Id "FLE Standard Time"
         Write-Log -Message 'Set TimeZone and other locale settings' -Category 'Info'
         
         ##############################################################
@@ -738,18 +738,18 @@ try {
         ##############################################################
         # Session Timeouts and Windows Optimizations
         ##############################################################
-        New-Item -ItemType Directory -Force -Path "C:\AVDImage"
-        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/ConfigureSessionTimeoutsV2.ps1" -OutFile "C:\AVDImage\ConfigureSessionTimeoutsV2.ps1"
+        #New-Item -ItemType Directory -Force -Path "C:\AVDImage"
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/ConfigureSessionTimeoutsV2.ps1" -OutFile "C:\management\ConfigureSessionTimeoutsV2.ps1"
         & "C:\AVDImage\ConfigureSessionTimeoutsV2.ps1" -MaxDisconnectionTime 5 -MaxIdleTime 120 -RemoteAppLogoffTimeLimit 15 -fResetBroken "1"
-        Remove-Item -Path "C:\AVDImage" -Recurse -Force
+        #Remove-Item -Path "C:\AVDImage" -Recurse -Force
 
         ##############################################################
         # Session Timeouts and Windows Optimizations
         ##############################################################
-        New-Item -ItemType Directory -Force -Path "C:\AVDImage"
-        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/WindowsOptimization.ps1" -OutFile "C:\AVDImage\WindowsOptimization.ps1"
+        #New-Item -ItemType Directory -Force -Path "C:\AVDImage"
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/WindowsOptimization.ps1" -OutFile "C:\management\WindowsOptimization.ps1"
         & "C:\AVDImage\WindowsOptimization.ps1" -Optimizations "All"
-        Remove-Item -Path "C:\AVDImage" -Recurse -Force
+        #Remove-Item -Path "C:\AVDImage" -Recurse -Force
 }
 catch {
         Write-Log -Message $_ -Category 'Error'
