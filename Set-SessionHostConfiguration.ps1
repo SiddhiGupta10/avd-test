@@ -515,6 +515,18 @@ try {
         if ($IdentityServiceProvider -eq "EntraIDKerberos" -and $AmdVmSize -eq 'false' -and $NvidiaVmSize -eq 'false') {
                 Start-Process -FilePath 'shutdown' -ArgumentList '/r /t 30'
         }
+        
+        ##############################################################
+        #  TimeZone and other settings applied
+        ##############################################################
+        Set-TimeZone -Id "FLE Standard Time"
+        Set-WinUILanguageOverride -Language fi-FI
+        Set-WinUserLanguageList fi-FI -Force
+        Set-WinSystemLocale fi-FI
+        Set-Culture fi-FI
+        Set-WinHomeLocation -GeoId 77
+        Copy-UserInternationalSettingsToSystem -WelcomeScreen $False -NewUser $True
+        Write-Log -Message 'Set TimeZone and other locale settings' -Category 'Info'    
 }
 catch {
         Write-Log -Message $_ -Category 'Error'
