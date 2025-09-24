@@ -458,9 +458,13 @@ try {
                         "%TEMP%\*.VHD",
                         "%TEMP%\*.VHDX",
                         "%Windir%\TEMP\*.VHD",
-                        "%Windir%\TEMP\*.VHDX"
-                        "$FslogixFileShareName\*.VHD"
-                        "$FslogixFileShareName\*.VHDX"
+                        "%Windir%\TEMP\*.VHDX",
+                        "$FslogixFileShareName\*.VHD",
+                        "$FslogixFileShareName\*.VHDX",
+                        "%ProgramFiles%\Epic",
+                        "$env:LOCALAPPDATA\Hyperdrive",
+                        "$env:LOCALAPPDATA\Hyperdrive\EBWebView",
+                        "$env:PROGRAMDATA\HyperdriveTempData"
                 )
 
                 foreach ($File in $Files) {
@@ -471,8 +475,17 @@ try {
                 $Processes = @(
                         "%ProgramFiles%\FSLogix\Apps\frxccd.exe",
                         "%ProgramFiles%\FSLogix\Apps\frxccds.exe",
-                        "%ProgramFiles%\FSLogix\Apps\frxsvc.exe"
-                )
+                        "%ProgramFiles%\FSLogix\Apps\frxsvc.exe",
+                        "%ProgramFiles%\Epic\Hyperdrive\*\Bin\Core\win-x86\EpicDumpTruckInjector.exe",
+                        "%ProgramFiles%\Epic\Hyperdrive\*\Bin\Core\win-x86\DumpTruck\EpicDumpTruckInjector64.exe",
+                        "%ProgramFiles%\Epic\Hyperdrive\*\Hyperdrive\Hyperdrive.exe",
+                        "%ProgramFiles%\Epic\Hyperdrive\VersionIndependent\Hyperspace.exe",
+                        "%ProgramFiles%\Epic\Hyperdrive\VersionIndependent\Launcher.exe",
+                        "%ProgramFiles%\Epic\Hyperdrive\*\Bin\EpicPDFSpooler.exe",
+                        "%ProgramFiles%\Epic\Hyperdrive\*\Bin\HubFramework.exe",
+                        "%ProgramFiles%\Epic\Hyperdrive\*\Bin\Core\win-x86\HubCore.exe",
+                        "%ProgramFiles%\Epic\Hyperdrive\*\Bin\Core\win-x86\HubSpoke.exe"
+                                )
 
                 foreach ($Process in $Processes) {
                         Add-MpPreference -ExclusionProcess $Process
