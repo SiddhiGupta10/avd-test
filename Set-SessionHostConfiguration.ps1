@@ -624,7 +624,7 @@ try {
         ##############################################################
         # Session Timeouts
         ##############################################################
-        #New-Item -ItemType Directory -Force -Path "C:\AIB"
+        New-Item -ItemType Directory -Force -Path "C:\AIB"
         Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/ConfigureSessionTimeoutsV2.ps1" -OutFile "C:\AIB\ConfigureSessionTimeoutsV2.ps1"
         & "C:\AIB\ConfigureSessionTimeoutsV2.ps1" -MaxDisconnectionTime 5 -MaxIdleTime 120 -RemoteAppLogoffTimeLimit 15 -fResetBroken "1"
 
@@ -710,7 +710,7 @@ try {
         ##############################################################
         # File Updater & cleanup (Future use with AzCopy)
         ##############################################################
-        #Issue 27: Copy Config.json for Epic Hyperdrive
+        <##Issue 27: Copy Config.json for Epic Hyperdrive
         $sourceItem = "C:\AIB\software\Hyperdrive\Epic Hyperdrive Setup 100.2508.0\491Config.json"
         $targetFolder = "C:\Program Files (x86)\Epic\Hyperdrive\Config"
         Copy-Item -Path $sourceItem -Destination $targetFolder -Force
