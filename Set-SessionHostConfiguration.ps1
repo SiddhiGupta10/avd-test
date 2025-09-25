@@ -704,9 +704,9 @@ try {
         ##############################################################
         # Windows Optimizations
         ##############################################################
-        New-Item -ItemType Directory -Force -Path "C:\AVDImage"
-        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/WindowsOptimization.ps1" -OutFile "C:\AVDImage\WindowsOptimization.ps1"
-        & "C:\AVDImage\WindowsOptimization.ps1" -Optimizations "WindowsMediaPlayer","DefaultUserSettings","Autologgers","Services","NetworkOptimizations","LGPO","DiskCleanup","Edge"        
+        # New-Item -ItemType Directory -Force -Path "C:\AVDImage"
+        # Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/WindowsOptimization.ps1" -OutFile "C:\AVDImage\WindowsOptimization.ps1"
+        # & "C:\AVDImage\WindowsOptimization.ps1" -Optimizations "WindowsMediaPlayer","DefaultUserSettings","Autologgers","Services","NetworkOptimizations","LGPO","DiskCleanup","Edge"        
 
         ##############################################################
         # File Updater & cleanup (Future use with AzCopy)
