@@ -749,6 +749,7 @@ try {
         # Fixed pagefile on D: and remove any on C:
         ##############################################################
 
+        <#
         Write-Log -Message "Configuring fixed pagefile on D: and removing any on C:..." -Category 'Info'
 
         # Disable automatic management
@@ -756,15 +757,17 @@ try {
         -Property @{ AutomaticManagedPagefile = $false }
 
         # Remove any pagefile entry on C:
-        Get-CimInstance -Query "SELECT * FROM Win32_PageFileSetting WHERE Name='C:\\pagefile.sys'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        Get-CimInstance -Query "SELECT * FROM Win32_PageFileSetting WHERE Name='C:\\pagefile.sys'" |
+        Remove-CimInstance -ErrorAction SilentlyContinue
 
         # Remove any existing pagefile entry on D:
-        Get-CimInstance -Query "SELECT * FROM Win32_PageFileSetting WHERE Name='D:\\pagefile.sys'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        Get-CimInstance -Query "SELECT * FROM Win32_PageFileSetting WHERE Name='D:\\pagefile.sys'" |
+        Remove-CimInstance -ErrorAction SilentlyContinue
 
         # Create new fixed-size pagefile on D:
         $initialSizeMB = [uint32]10240
         $maxSizeMB     = [uint32]10240
-a
+
         New-CimInstance -ClassName Win32_PageFileSetting `
         -Property @{
                 Name        = "D:\\pagefile.sys"
@@ -773,6 +776,7 @@ a
         }
 
         Write-Log -Message "Pagefile created on D: with fixed size $initialSizeMB MB." -Category 'Info'
+#>
 
         ##############################################################
         #  Install the AVD Agent
