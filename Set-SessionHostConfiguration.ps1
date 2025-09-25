@@ -507,6 +507,277 @@ try {
         Write-Log -Message 'Language, locales, culture, region and timezone configured' -Category 'Info'
 
         ##############################################################
+        #  AVD Golden Image Hardening
+        #  - Telemetry (policies)
+        #  - Consumer Experiences (policy)
+        #  - Geolocation (policies)
+        #  - Find My Device (policy)
+        #  - Improve handwriting/typing (policies)
+        #  - Ads / Advertising ID + Tailored experiences (policies)
+        ##############################################################
+
+        # -------------------------------
+        # 1) TELEMETRY (policies)
+        # -------------------------------
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "DisableEnterpriseAuthProxy" -Type DWord -Value 1
+        New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows" -Name "UserCritEtwOptOut" -Type DWord -Value 1
+        Write-Log -Message "Telemetry hardened & DiagTrack disabled" -Category 'Info'
+
+        # -------------------------------
+        # 2) CONSUMER EXPERIENCES (policy)
+        # -------------------------------
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableTailoredExperiencesWithDiagnosticData" -Type DWord -Value 1
+        Write-Log -Message "Consumer experiences disabled" -Category 'Info'
+
+        # -------------------------------
+        # 3) GEOLOCATION (policies)
+        # -------------------------------
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors" -Name "DisableLocation" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors" -Name "DisableWindowsLocationProvider" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors" -Name "DisableLocationScripting" -Type DWord -Value 1
+
+        # Block app access to location (Force Deny)
+        # AppPrivacy policy values: 0 = User in control, 1 = Force allow, 2 = Force deny
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Name "LetAppsAccessLocation" -Type DWord -Value 2
+        Write-Log -Message "Geolocation disabled (system + apps)" -Category 'Info'
+
+        # -------------------------------
+        # 4) FIND MY DEVICE (policy)
+        # -------------------------------
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\FindMyDevice" -Force | Out-Null
+        # 0 = Off, 1 = On
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\FindMyDevice" -Name "AllowFindMyDevice" -Type DWord -Value 0
+        Write-Log -Message "Find My Device disabled" -Category 'Info'
+
+        # -------------------------------
+        # 5) IMPROVE HANDWRITING / TYPING (policies)
+        # -------------------------------
+        # Input personalization (inking/typing learning & data collection)
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization" -Force | Out-Null
+        # 0 = Disallow personalization
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization" -Name "AllowInputPersonalization"  -Type DWord -Value 0
+        # Restrict implicit collections (1 = restrict/deny)
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection"  -Type DWord -Value 1
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Type DWord -Value 1
+        # block handwriting data sharing
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\TabletPC" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\TabletPC" -Name "PreventHandwritingDataSharing" -Type DWord -Value 1
+        Write-Log -Message "Handwriting and typing improvement disabled" -Category 'Info'
+
+        # -------------------------------
+        # 6) ADS / ADVERTISING ID (policies)
+        # -------------------------------
+        # Disable Advertising ID system-wide
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledByGroupPolicy" -Type DWord -Value 1
+        Write-Host "[OK] Advertising ID disabled"
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0
+        Write-Host "[OK] Cortana disabled"
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableSearchHistory" -Value 1 -PropertyType DWord -Force | Out-Null
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCloudSearch" -Value 0 -PropertyType DWord -Force | Out-Null
+        Write-Log -Message "Windows Search History disabled" -Category 'Info'
+
+        # -------------------------------
+        # 7) FIRST SIGN-IN ANIMATION / PRIVACY SETTINGS EXPERIENCE (policies)
+        # -------------------------------
+        # 1) Disable First Sign-In Animation (policy key)
+        $polSystem = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System'
+        if (-not (Test-Path $polSystem)) {
+        New-Item -Path $polSystem -Force | Out-Null
+        }
+        New-ItemProperty -Path $polSystem -Name 'EnableFirstLogonAnimation' -PropertyType DWord -Value 0 -Force | Out-Null
+
+        # (Optional/defensive) Also set Winlogon default key used by some builds/docs
+        $winlogon = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+        if (-not (Test-Path $winlogon)) {
+                New-Item -Path $winlogon | Out-Null
+        }
+        New-ItemProperty -Path $winlogon -Name 'EnableFirstLogonAnimation' -PropertyType DWord -Value 0 -Force | Out-Null
+
+        # 2) Disable Privacy Settings Experience at sign-in (OOBE)
+        $oobe = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OOBE'
+        New-Item -Path $oobe -Force | Out-Null
+        New-ItemProperty -Path $oobe -Name 'DisablePrivacyExperience' -PropertyType DWord -Value 1 -Force | Out-Null
+        Write-Log -Message "First Sign-In Animation and Privacy Settings Experience disabled" -Category 'Info'
+        $regPath = "HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization"
+        
+        # Ensure the key exists
+        if (-not (Test-Path $regPath)) {
+                New-Item -Path $regPath -Force | Out-Null
+        }
+
+        # Disable text and ink data collection
+        New-ItemProperty -Path $regPath -Name "RestrictImplicitTextCollection" -Value 1 -PropertyType DWord -Force | Out-Null
+        New-ItemProperty -Path $regPath -Name "RestrictImplicitInkCollection"  -Value 1 -PropertyType DWord -Force | Out-Null
+
+        # Block personalization features
+        New-ItemProperty -Path $regPath -Name "AllowInputPersonalization" -Value 0 -PropertyType DWord -Force | Out-Null
+
+        ##############################################################
+        # Session Timeouts
+        ##############################################################
+        New-Item -ItemType Directory -Force -Path "C:\AVDImage"
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/ConfigureSessionTimeoutsV2.ps1" -OutFile "C:\AVDImage\ConfigureSessionTimeoutsV2.ps1"
+        & "C:\AVDImage\ConfigureSessionTimeoutsV2.ps1" -MaxDisconnectionTime 5 -MaxIdleTime 120 -RemoteAppLogoffTimeLimit 15 -fResetBroken "1"
+
+        ##############################################################
+        # Edge Policies
+        ##############################################################
+
+        $edgeReg = 'HKLM:\SOFTWARE\Policies\Microsoft\Edge'
+
+        function New-EdgeKey($path) {
+        if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
+        }
+
+        function Set-DWord($path, $name, $value) {
+        New-EdgeKey $path
+        New-ItemProperty -Path $path -Name $name -PropertyType DWord -Value $value -Force | Out-Null
+        }
+
+        function Set-ListPolicy($baseKey, [string[]]$items) {
+        # Creates subkey where values "1","2",... are REG_SZ entries
+        # Clears existing numeric entries first
+        New-EdgeKey $baseKey
+        Get-ItemProperty -Path $baseKey -ErrorAction SilentlyContinue | Out-Null
+        Get-ChildItem -Path $baseKey -ErrorAction SilentlyContinue | ForEach-Object {
+        if ($_.PSChildName -match '^\d+$') { Remove-ItemProperty -Path $baseKey -Name $_.PSChildName -ErrorAction SilentlyContinue }
+        }
+        $i = 1
+        foreach ($item in $items) {
+        New-ItemProperty -Path $baseKey -Name $i -PropertyType String -Value $item -Force | Out-Null
+        $i++
+        }
+        }
+        Write-Log -Message "Applying Edge hardening to $edgeReg" -Category 'Info'
+
+        # --- Extensions: block everything by default ---
+        $blocklistKey = Join-Path $edgeReg 'ExtensionInstallBlocklist'
+        Set-ListPolicy -baseKey $blocklistKey -items @('*')  # block all
+
+        # --- Autofill: addresses & cards ---
+        Set-DWord $edgeReg 'AutofillAddressEnabled' 0
+        Set-DWord $edgeReg 'AutofillCreditCardEnabled' 0
+
+        # --- Password manager & Password Monitor ---
+        Set-DWord $edgeReg 'PasswordManagerEnabled' 0
+        Set-DWord $edgeReg 'PasswordMonitorAllowed' 0
+
+        # --- Search suggestions & Bing trending ---
+        Set-DWord $edgeReg 'SearchSuggestEnabled' 0
+        # Optional but recommended on recent Edge (135+):
+        Set-DWord $edgeReg 'AddressBarTrendingSuggestEnabled' 0
+
+        # --- Clear all browsing data on exit ---
+        Set-DWord $edgeReg 'ClearBrowsingDataOnExit' 1
+
+        # --- Hide First Run Experience ---
+        Set-DWord $edgeReg 'HideFirstRunExperience' 1
+
+        # --- Disable Microsoft Editor cloud proofing (enhanced spell/grammar) ---
+        Set-DWord $edgeReg 'MicrosoftEditorProofingEnabled' 0
+
+        # Disable address-bar editing (does NOT fully prevent navigation)
+        Set-DWord $edgeReg 'AddressBarEditingEnabled' 0
+
+        # Session-only cookies (except allowlist)
+        Set-DWord $edgeReg 'DefaultCookiesSetting' 4
+
+        # Disable Google Cast
+        Set-DWord $edgeReg 'EnableMediaRouter' 0
+
+        <# # --- Optional: Cookie exceptions to persist across exit ---
+        if ($SaveCookiesOnExitUrls.Count -gt 0) {
+        $saveOnExitKey = Join-Path $edgeReg 'SaveCookiesOnExit'
+        Set-ListPolicy -baseKey $saveOnExitKey -items $SaveCookiesOnExitUrls
+        } #>
+
+        ##############################################################
+        # Windows Optimizations
+        ##############################################################
+        New-Item -ItemType Directory -Force -Path "C:\AVDImage"
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/WindowsOptimization.ps1" -OutFile "C:\AVDImage\WindowsOptimization.ps1"
+        & "C:\AVDImage\WindowsOptimization.ps1" -Optimizations "WindowsMediaPlayer","DefaultUserSettings","Autologgers","Services","NetworkOptimizations","LGPO","DiskCleanup","Edge"        
+
+        ##############################################################
+        # File Updater & cleanup (Future use with AzCopy)
+        ##############################################################
+        <#
+        #Issue 27: Copy Config.json for Epic Hyperdrive
+        $sourceItem = "C:\AIB\software\Hyperdrive\Epic Hyperdrive Setup 100.2508.0\491Config.json"
+        $targetFolder = "C:\Program Files (x86)\Epic\Hyperdrive\Config"
+        Copy-Item -Path $sourceItem -Destination $targetFolder -Force
+
+        #Issue 25: Copy FileZilla configuration file
+        $sourceItem = "C:\AIB\software\FileZilla\fzdefaults.xml"
+        $targetFolder = "C:\Program Files\FileZilla FTP Client"
+        Copy-Item -Path $sourceItem -Destination $targetFolder -Force
+
+        # Issue 1
+        New-Item -ItemType Directory -Force -Path C:\\Sovellukset\Hyperdrive
+        New-Item -ItemType Directory -Force -Path C:\\Sovellukset\tukiportaali
+
+        $sourceFolderHyperdriveBatScript = "C:\\AIB\\software\\LastConfigurations\\Hyperdrive"
+        $targetFolderHyperdriveBatScript = "C:\\Sovellukset"
+        Copy-Item -Path $sourceFolderHyperdriveBatScript -Destination $targetFolderHyperdriveBatScript -Recurse -Force
+        Write-Log -Message "HyperdriveBatScript copied successfully" -Category 'Info'
+
+        $sourceFolderTukiportaali = "C:\\AIB\\software\\LastConfigurations\\tukiportaali"
+        $targetFolderTukiportaali = "C:\\Sovellukset"
+        Copy-Item -Path $sourceFolderTukiportaali -Destination $targetFolderTukiportaali -Recurse -Force
+        Write-Log -Message "Edge-Apotti-tukiportaali copied successfully" -Category 'Info'
+
+
+<#         # Clean up
+        $pathsToClean = "C:\\AIB"
+        foreach ($path in $($pathsToClean)) { 
+                if (Test-Path $path) { 
+                        Remove-Item -Path $path -Recurse -Force -ErrorAction SilentlyContinue 
+                } 
+        } #>
+
+        ##############################################################
+        # Fixed pagefile on D: and remove any on C:
+        ##############################################################
+<#
+        Write-Log -Message "Configuring fixed pagefile on D: and removing any on C:..." -Category 'Info'
+
+        # Disable automatic management
+        Set-CimInstance -Query "SELECT * FROM Win32_ComputerSystem" `
+        -Property @{ AutomaticManagedPagefile = $false }
+
+        # Remove any pagefile entry on C:
+        Get-CimInstance -Query "SELECT * FROM Win32_PageFileSetting WHERE Name='C:\\pagefile.sys'" |
+        Remove-CimInstance -ErrorAction SilentlyContinue
+
+        # Remove any existing pagefile entry on D:
+        Get-CimInstance -Query "SELECT * FROM Win32_PageFileSetting WHERE Name='D:\\pagefile.sys'" |
+        Remove-CimInstance -ErrorAction SilentlyContinue
+
+        # Create new fixed-size pagefile on D:
+        $initialSizeMB = [uint32]10240
+        $maxSizeMB     = [uint32]10240
+
+        New-CimInstance -ClassName Win32_PageFileSetting `
+        -Property @{
+                Name        = "D:\\pagefile.sys"
+                InitialSize = $initialSizeMB
+                MaximumSize = $maxSizeMB
+        }
+
+        Write-Log -Message "Pagefile created on D: with fixed size $initialSizeMB MB." -Category 'Info'
+#>
+
+        ##############################################################
         #  Install the AVD Agent
         ##############################################################
         $BootInstaller = 'AVD-Bootloader.msi'
