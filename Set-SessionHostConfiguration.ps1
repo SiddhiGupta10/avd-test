@@ -710,7 +710,6 @@ try {
         ##############################################################
         # File Updater & cleanup (Future use with AzCopy)
         ##############################################################
-        <#
         #Issue 27: Copy Config.json for Epic Hyperdrive
         $sourceItem = "C:\AIB\software\Hyperdrive\Epic Hyperdrive Setup 100.2508.0\491Config.json"
         $targetFolder = "C:\Program Files (x86)\Epic\Hyperdrive\Config"
