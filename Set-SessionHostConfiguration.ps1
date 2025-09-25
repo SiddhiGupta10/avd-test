@@ -624,9 +624,9 @@ try {
         ##############################################################
         # Session Timeouts
         ##############################################################
-        New-Item -ItemType Directory -Force -Path "C:\AVDImage"
-        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/ConfigureSessionTimeoutsV2.ps1" -OutFile "C:\AVDImage\ConfigureSessionTimeoutsV2.ps1"
-        & "C:\AVDImage\ConfigureSessionTimeoutsV2.ps1" -MaxDisconnectionTime 5 -MaxIdleTime 120 -RemoteAppLogoffTimeLimit 15 -fResetBroken "1"
+        #New-Item -ItemType Directory -Force -Path "C:\AIB"
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/ConfigureSessionTimeoutsV2.ps1" -OutFile "C:\AIB\ConfigureSessionTimeoutsV2.ps1"
+        & "C:\AIB\ConfigureSessionTimeoutsV2.ps1" -MaxDisconnectionTime 5 -MaxIdleTime 120 -RemoteAppLogoffTimeLimit 15 -fResetBroken "1"
 
         ##############################################################
         # Edge Policies
@@ -703,9 +703,9 @@ try {
         ##############################################################
         # Windows Optimizations
         ##############################################################
-        # New-Item -ItemType Directory -Force -Path "C:\AVDImage"
-        # Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/WindowsOptimization.ps1" -OutFile "C:\AVDImage\WindowsOptimization.ps1"
-        # & "C:\AVDImage\WindowsOptimization.ps1" -Optimizations "WindowsMediaPlayer","DefaultUserSettings","Autologgers","Services","NetworkOptimizations","LGPO","DiskCleanup","Edge"        
+        # New-Item -ItemType Directory -Force -Path "C:\AIB"
+        # Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/RDS-Templates/refs/heads/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/WindowsOptimization.ps1" -OutFile "C:\AIB\WindowsOptimization.ps1"
+        # & "C:\AIB\WindowsOptimization.ps1" -Optimizations "WindowsMediaPlayer","DefaultUserSettings","Autologgers","Services","NetworkOptimizations","LGPO","DiskCleanup","Edge"        
 
         ##############################################################
         # File Updater & cleanup (Future use with AzCopy)
