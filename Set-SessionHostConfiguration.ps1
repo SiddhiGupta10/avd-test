@@ -781,7 +781,7 @@ try {
         ##############################################################
         #  Install the AVD Agent
         ##############################################################
-        <#$BootInstaller = 'AVD-Bootloader.msi'
+        $BootInstaller = 'AVD-Bootloader.msi'
         Get-WebFile -FileName $BootInstaller -URL 'https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RWrxrH'
         Start-Process -FilePath 'msiexec.exe' -ArgumentList "/i $BootInstaller /quiet /qn /norestart /passive" -Wait -Passthru
         Write-Log -Message 'Installed AVD Bootloader' -Category 'Info'
@@ -792,7 +792,7 @@ try {
         Start-Process -FilePath 'msiexec.exe' -ArgumentList "/i $AgentInstaller /quiet /qn /norestart /passive REGISTRATIONTOKEN=$HostPoolRegistrationToken" -Wait -PassThru
         Write-Log -Message 'Installed AVD Agent' -Category 'Info'
         Start-Sleep -Seconds 5
-        #>
+        
 
         ##############################################################
         #  Restart VM
