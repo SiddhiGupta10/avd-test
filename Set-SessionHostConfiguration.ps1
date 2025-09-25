@@ -494,7 +494,7 @@ try {
         }
 
         ##############################################################
-        #  TimeZone and other settings applied
+        #  Language and region settings applied
         ##############################################################
         
         Set-WinUILanguageOverride -Language fi-FI
@@ -503,8 +503,7 @@ try {
         Set-Culture fi-FI
         Set-WinHomeLocation -GeoId 77
         Copy-UserInternationalSettingsToSystem -WelcomeScreen $False -NewUser $True
-        #tzutil /s "FLE Standard Time"
-        Write-Log -Message 'Language, locales, culture, region and timezone configured' -Category 'Info'
+        Write-Log -Message 'Language, locales, culture and region configured' -Category 'Info'
 
         ##############################################################
         #  AVD Golden Image Hardening
