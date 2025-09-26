@@ -313,7 +313,7 @@ function Copy-FixFile {
     }
 
     try {
-        Copy-Item -Destination $Destination -Force -Recurse:$Recurse -ErrorAction Stop
+        Copy-Item -Path -Source $Source -Destination $Destination -Force -Recurse:$Recurse -ErrorAction Stop
         Write-Log -Message "Copied $Source → $Destination" -Category 'Info'
     }
     catch {
@@ -772,7 +772,18 @@ try {
         foreach ($setting in $edgeSettings) {
         Set-RegistryValue -Path $edgeReg -Name $setting.Name -PropertyType $setting.PropertyType -Value $setting.Value
         }
-       #New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\EdgeUpdate' -Name 'Update {56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}' -PropertyType DWord -Value 0 -Force
+
+        try {
+        Set-RegistryValue `
+                -Name 'Update {56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}' `
+                -Path 'HKLM:\SOFTWARE\Policies\Microsoft\EdgeUpdate' `
+                -PropertyType DWord `
+                -Value 0
+        Write-Log -Category 'Info' -Message "Edge auto-update policy applied successfully."
+        }
+        catch {
+        Write-Log -Category 'Error' -Message "Failed to set Edge auto-update policy: $_"
+        }
 
         ##############################################################
         # Windows Optimizations
@@ -784,7 +795,7 @@ try {
         ##############################################################
         # File Updater & cleanup
         ##############################################################
-        #Issue 27: Copy Config.json for Epic Hyperdrive
+ <#        #Issue 27: Copy Config.json for Epic Hyperdrive
         $sourceItem = "C:\AIB\software\Hyperdrive\Epic Hyperdrive Setup 100.2508.0\491Config.json"
         $targetFolder = "C:\Program Files (x86)\Epic\Hyperdrive\Config"
 
@@ -809,9 +820,9 @@ try {
 
         $sourceItem = "C:\AIB\software\\LastConfigurations\\tukiportaali"
         $targetFolder = "C:\Sovellukset"
-        Copy-FixFile -Source $sourceItem -Destination $targetFolder
+        Copy-FixFile -Source $sourceItem -Destination $targetFolder #>
 
-<#         $fixes = @(
+        $fixes = @(
         [PSCustomObject]@{ Issue = 27; Description = "Epic Hyperdrive Config"; Source = "C:\AIB\software\Hyperdrive\Epic Hyperdrive Setup 100.2508.0\491Config.json"; Destination = "C:\Program Files (x86)\Epic\Hyperdrive\Config" },
         [PSCustomObject]@{ Issue = 25; Description = "FileZilla config"; Source = "C:\AIB\software\FileZilla\fzdefaults.xml"; Destination = "C:\Program Files\FileZilla FTP Client" },
         [PSCustomObject]@{ Issue = 1; Description = "Hyperdrive bat script"; Source = "C:\AIB\software\LastConfigurations\Hyperdrive"; Destination = "C:\Sovellukset" },
@@ -821,7 +832,7 @@ try {
         foreach ($fix in $fixes) {
         Write-Log -Category 'Info' -Message "Applying fix for Issue $($fix.Issue): $($fix.Description)"
         Copy-FixFile -Source $fix.Source -Destination $fix.Destination
-        } #>
+        }
 
 <#         # Clean up
         $pathsToClean = "C:\\AIB"
