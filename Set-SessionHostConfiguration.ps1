@@ -772,7 +772,7 @@ try {
         foreach ($setting in $edgeSettings) {
         Set-RegistryValue -Path $edgeReg -Name $setting.Name -PropertyType $setting.PropertyType -Value $setting.Value
         }
-        New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\EdgeUpdate' -Name 'Update {56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}' -PropertyType DWord -Value 0 -Force
+       #New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\EdgeUpdate' -Name 'Update {56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}' -PropertyType DWord -Value 0 -Force
 
         ##############################################################
         # Windows Optimizations
