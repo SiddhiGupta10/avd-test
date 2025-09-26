@@ -58,7 +58,29 @@ function New-Log {
     
         Add-Content $script:Log "Date`t`t`tCategory`t`tDetails"
 }
-
+function Write-Log {
+        Param (
+                [Parameter(Mandatory = $false, Position = 0)]
+                [ValidateSet("Info", "Warning", "Error")]
+                $Category = 'Info',
+                [Parameter(Mandatory = $true, Position = 1)]
+                $Message
+        )
+    
+        $Date = get-date
+        $Content = "[$Date]`t$Category`t`t$Message`n" 
+        Add-Content $Script:Log $content -ErrorAction Stop
+        If ($Verbose) {
+                Write-Verbose $Content
+        }
+        Else {
+                Switch ($Category) {
+                        'Info' { Write-Host $content }
+                        'Error' { Write-Error $Content }
+                        'Warning' { Write-Warning $Content }
+                }
+        }
+}
 function Copy-FixFile {
     [CmdletBinding()]
     param (
